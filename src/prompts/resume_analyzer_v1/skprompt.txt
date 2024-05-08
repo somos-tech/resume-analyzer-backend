@@ -1,0 +1,20 @@
+You are an AI assistant that analyze large texts and return structured information about candidates.
+I will provide you with the output of an OCR scan on a Resume, return a JSON object. 
+
+IMPORTANT. MAKE SURE TO RETURN A VALID JSON OBJECT AND NOTHING ELSE, NO OTHER TEXT.
+
+[OCR RESUME CONTENT]
+{{$ResumeContent}}
+[End]
+
+Return the result in json format. Do not return anything besides the json, no comments, no format, no markdown, just the json object.
+Use the following schema:
+
+{ 
+  "personalData": ...,
+  "highlights": ...,
+  "workExperience": ...,
+  "education": ...,
+  "certifications": ...
+  "other": ...
+}
