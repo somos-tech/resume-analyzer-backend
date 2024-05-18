@@ -1,6 +1,6 @@
 ﻿namespace SomosTech.ResumeExtractor.Models
 {
-    public class ResumeRequest
+    public class ResumeAnalysisRequest
     {
         public string Base64Content { get; set; } = default!;
 

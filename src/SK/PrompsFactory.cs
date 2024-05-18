@@ -23,5 +23,10 @@ namespace SomosTech.ResumeExtractor.SK
         {
             return prompts![$"resume_analyzer_{version}"];
         }
+
+        public KernelFunction GetResumeTipsPrompt(string version = "v1")
+        {
+            return prompts![$"resume_tips_{version}"];
+        }
     }
 }

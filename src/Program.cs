@@ -6,6 +6,7 @@ using SomosTech.ResumeExtractor.Models;
 using SomosTech.ResumeExtractor.SK;
 using Azure.AI.DocumentIntelligence;
 using Azure;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,11 @@ builder.Services.AddSingleton((sp) =>
 
     return new ResumeAnalyzerSkill(kernel, promptsFactory);
 }).AddSingleton((sp) => {
+    var kernel = sp.GetRequiredService<Kernel>();
+    var promptsFactory = sp.GetRequiredService<IPromptsFactory>();
+
+    return new ResumeTipsSkill(kernel, promptsFactory);
+}).AddSingleton((sp) => {
     var client = sp.GetRequiredService<DocumentIntelligenceClient>();
 
     return new DocumentAnalyzer(client);
@@ -49,6 +55,11 @@ builder.Services.AddSingleton((sp) =>
     var resumeAnalyzerSkill = sp.GetRequiredService<ResumeAnalyzerSkill>();
 
     return new ResumeExtractorService(documentAnalyzer, resumeAnalyzerSkill);
+}).AddSingleton((sp) =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+
+    return new ResumeUploaderService(configuration["PREVIEW_STORAGE_CONNECTION_STRING"]!, "preview");
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -68,11 +79,32 @@ app.MapGet("/", () => "Hello World!")
     .WithName("GetHelloWorld")
     .WithOpenApi();
 
-app.MapPost("/analyze", async (ResumeExtractorService resumeExtractorService, ResumeRequest request) =>
+app.MapPost("/analyze", async (ResumeExtractorService resumeExtractorService, ResumeAnalysisRequest request) =>
 {
     var result = await resumeExtractorService.ProcessResume(request.Base64Content!, request.AnalyzerVersion);
 
     return result;
 }).WithName("AnalyzeResume").WithOpenApi();
+
+app.MapPost("/tips", async (ResumeTipsSkill skill, ResumeTipsRequest request) =>
+{
+    var result = await skill.GetTips(request!.ResumeTextContent, request!.Role);
+
+    return result;
+}).WithName("Tips").WithOpenApi();
+
+app.MapPost("/upload-resume", async (ResumeUploaderService uploaderService, ResumeUploadRequest request) =>
+{
+    if (string.IsNullOrEmpty(request.User) || string.IsNullOrEmpty(request.Id))
+    {
+        throw new BadHttpRequestException("User and Id are required");
+    }
+
+    var fileName = request.User + "_" + request.Id;
+
+    var result = await uploaderService.UploadBase64ResumeAsync(request.Base64Content, fileName, "pdf");
+
+    return result;
+}).WithName("").WithOpenApi();
 
 app.Run();

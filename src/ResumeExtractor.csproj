@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.AI.DocumentIntelligence" Version="1.0.0-beta.2" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.20.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.0.1" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.205.1" />
@@ -18,12 +19,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="prompts\resume_tips_v1\config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="prompts\resume_analyzer_v1\config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="prompts\resume_tips_v1\skprompt.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="prompts\resume_analyzer_v1\skprompt.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

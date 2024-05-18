@@ -11,10 +11,11 @@ Return the result in json format. Do not return anything besides the json, no co
 Use the following schema:
 
 { 
-  "personalData": ...,
+  "personalData": { "name": ..., "email": ..., "address": ... },
+  "bio": "...",
+  "education": [{ "start": ..., "end": ..., "location": ..., "description": ... }, ...],
   "highlights": ...,
-  "workExperience": ...,
-  "education": ...,
+  "workExperience": [{"start": ..., "end": ..., "location": ..., "company": ..., "description": ..., "impact": ...}, ...],
   "certifications": ...
   "other": ...
 }
